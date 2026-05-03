@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+// Node for adjacency list
+struct Node {
+    int vertex;
+    struct Node* next;
+};
+
+struct Node* adj[MAX];
+int visited[MAX];
+
+// Create node
+struct Node* createNode(int v) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Add edge (undirected)
+void addEdge(int u, int v) {
+    struct Node* newNode = createNode(v);
+    newNode->next = adj[u];
+    adj[u] = newNode;
+
+    struct Node* newNode2 = createNode(u);
+    newNode2->next = adj[v];
+    adj[v] = newNode2;
+}
+
+// DFS
+void dfs(int v) {
+    visited[v] = 1;
+
+    struct Node* temp = adj[v];
+    while (temp) {
+        if (!visited[temp->vertex]) {
+            dfs(temp->vertex);
+        }
+        temp = temp->next;
+    }
+}
+
+// Main
+int main() {
+    int n, m;
+    scanf("%d %d", &n, &m);
+
+    // Initialize
+    for (int i = 1; i <= n; i++) {
+        adj[i] = NULL;
+        visited[i] = 0;
+    }
+
+    int u, v;
+    for (int i = 0; i < m; i++) {
+        scanf("%d %d", &u, &v);
+        addEdge(u, v);
+    }
+
+    // Start DFS from node 1
+    dfs(1);
+
+    // Check if all visited
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) {
+            printf("NOT CONNECTED\n");
+            return 0;
+        }
+    }
+
+    printf("CONNECTED\n");
+
+    return 0;
+}
